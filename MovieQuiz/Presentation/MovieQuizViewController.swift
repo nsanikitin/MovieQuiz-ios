@@ -33,6 +33,8 @@ struct QuizResultsViewModel {
 
 final class MovieQuizViewController: UIViewController {
     
+    @IBOutlet private weak var noButton: UIButton!
+    @IBOutlet private weak var yesButton: UIButton!
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
@@ -106,7 +108,9 @@ final class MovieQuizViewController: UIViewController {
     
     // приватный метод вывода на экран вопроса, который принимает на вход вью модель вопроса и ничего не возвращает
     private func show(quiz step: QuizStepViewModel) {
-        imageView.layer.borderColor = UIColor.clear.cgColor // убираем цвет у картинки
+        imageView.layer.borderColor = UIColor.clear.cgColor // убираем цвет рамки
+        noButton.isEnabled = true // включаем кнопку нет
+        yesButton.isEnabled = true // включаем кнопку да
         counterLabel.text = step.questionNumber
         textLabel.text = step.question
         imageView.image = step.image
@@ -115,7 +119,9 @@ final class MovieQuizViewController: UIViewController {
     // приватный метод, который меняет цвет рамки
     // принимает на вход булевое значение и ничего не возвращает
     private func showAnswerResult(isCorrect: Bool) {
-        imageView.layer.borderColor = isCorrect ? UIColor.green.cgColor : UIColor.red.cgColor // красим рамку в соответствии с ответом
+        noButton.isEnabled = false // выключаем кнопку нет для отсутствия доп. нажатий
+        yesButton.isEnabled = false // выключаем кнопку да для отсутствия доп. нажатий
+        imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor // красим рамку в соответствии с ответом
         
         if isCorrect {
             correctAnswers += 1 // увеличиваем кол-во правильных ответов на 1, если ответ верен
@@ -139,7 +145,7 @@ final class MovieQuizViewController: UIViewController {
             
             show(quiz: viewModel) // покзываем алерт
             
-        // сценарий перехода к следующему вопросу
+            // сценарий перехода к следующему вопросу
         } else {
             currentQuestionIndex += 1 // идем к следующему вопросу
             let nextQuestion = questions[currentQuestionIndex]
