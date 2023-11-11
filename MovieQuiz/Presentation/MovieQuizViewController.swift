@@ -128,7 +128,8 @@ final class MovieQuizViewController: UIViewController {
         }
         
         // запускаем задачу через 1 секунду c помощью диспетчера задач
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in // слабая ссылка на self
+            guard let self = self else { return } // разворачиваем слабую ссылку
             self.showNextQuestionOrResults()
         }
     }
@@ -165,7 +166,8 @@ final class MovieQuizViewController: UIViewController {
             preferredStyle: .alert)
         
         // настройка параметров по нажатию кнопки алерта
-        let action = UIAlertAction(title: result.buttonText, style: .default) { _ in
+        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in // слабая ссылка на self
+            guard let self = self else { return } // разворачиваем слабую ссылку
             self.currentQuestionIndex = 0 //обнуляем текущий индекс вопроса в массиве
             self.correctAnswers = 0 // обнуляем кол-во правильных ответов
             let firstQuestion = self.questions[self.currentQuestionIndex] // возвращаемся к первому вопросу
