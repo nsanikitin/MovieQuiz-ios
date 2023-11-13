@@ -1,8 +1,7 @@
-//
-//  QuestionFactoryProtocol.swift
-//  MovieQuiz
-//
-//  Created by Сергей Никитин on 12.11.2023.
-//
-
 import Foundation
+
+protocol QuestionFactoryProtocol {    
+    // свойство с делегатом
+    var delegate: QuestionFactoryDelegate? { get set }
+    func requestNextQuestion()
+}
