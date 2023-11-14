@@ -1,7 +1,7 @@
 import Foundation
 
 class QuestionFactory: QuestionFactoryProtocol {
-    // свойство с делегатом
+    // слабое свойство с делегатом
     weak var delegate: QuestionFactoryDelegate?
     // массив вопросов из мок-файлов
     private let questions: [QuizQuestion] = [
@@ -47,6 +47,7 @@ class QuestionFactory: QuestionFactoryProtocol {
             correctAnswer: false)
     ]
     
+    // метод возвращения следующего вопроса, передает его делегату QuestionFactoryDelegate
     func requestNextQuestion() {
         // выбираем случайный индекс вопроса и разворачиваем его
         guard let index = (0..<questions.count).randomElement() else {
@@ -56,6 +57,7 @@ class QuestionFactory: QuestionFactoryProtocol {
         // берем элемент из массива по случайному индексу
         // используем Subscript для проверки невыхода индекса за пределы массива
         let question = questions[safe: index]
+        // возвращаем не сразу, а передаем делегату
         delegate?.didReceiveNextQuestion(question: question)
     }
 }

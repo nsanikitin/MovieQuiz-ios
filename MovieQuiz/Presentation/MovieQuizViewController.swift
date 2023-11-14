@@ -19,19 +19,21 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        questionFactory = QuestionFactory()
+        questionFactory = QuestionFactory() // создаем экземпляр класса QuestionFactory
         questionFactory?.delegate = self // для инъекции зависимостей
-        questionFactory?.requestNextQuestion() // показываем первый вопрос
+        questionFactory?.requestNextQuestion() // запрашиваем первый вопрос
     }
     
     //MARK: - QuestionFactoryDelegate
+    // метод делегата QuestionFactoryDelegate
     func didReceiveNextQuestion(question: QuizQuestion?) {
         guard let question = question else {
             return
         }
         
-        currentQuestion = question
+        currentQuestion = question // записываем текущий вопрос
         let viewModel = convert(model: question)
+        // оборачиваем в DispatchQueue.main на случай вызова не из главного потока
         DispatchQueue.main.async { [weak self] in
             self?.show(quiz: viewModel)
         }
