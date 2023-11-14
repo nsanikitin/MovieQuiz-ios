@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F2F81292B02AD1B0048ADD2 /* AlertModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F81282B02AD1B0048ADD2 /* AlertModel.swift */; };
+		4F2F812B2B02AE0D0048ADD2 /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F812A2B02AE0D0048ADD2 /* AlertPresenter.swift */; };
 		4F3566B32AF016FB00876E38 /* YS Display-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4F3566B12AF016FB00876E38 /* YS Display-Medium.ttf */; };
 		4F3566B42AF016FB00876E38 /* YS Display-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4F3566B22AF016FB00876E38 /* YS Display-Bold.ttf */; };
 		4FEF1F502B00EE5C00F55347 /* QuestionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEF1F4F2B00EE5C00F55347 /* QuestionFactory.swift */; };
@@ -27,6 +29,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4F2F81282B02AD1B0048ADD2 /* AlertModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertModel.swift; sourceTree = "<group>"; };
+		4F2F812A2B02AE0D0048ADD2 /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
 		4F3566B12AF016FB00876E38 /* YS Display-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YS Display-Medium.ttf"; sourceTree = "<group>"; };
 		4F3566B22AF016FB00876E38 /* YS Display-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YS Display-Bold.ttf"; sourceTree = "<group>"; };
 		4FEF1F4F2B00EE5C00F55347 /* QuestionFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionFactory.swift; sourceTree = "<group>"; };
@@ -75,6 +79,7 @@
 				4FEF1F522B00F27B00F55347 /* QuizQuestion.swift */,
 				4FEF1F542B00F29500F55347 /* QuizStepViewModel.swift */,
 				4FEF1F562B00F2A800F55347 /* QuizResultsViewModel.swift */,
+				4F2F81282B02AD1B0048ADD2 /* AlertModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -83,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				AD1ABAB52831907B00B3E448 /* MovieQuizViewController.swift */,
+				4F2F812A2B02AE0D0048ADD2 /* AlertPresenter.swift */,
 				AD1ABAB72831907B00B3E448 /* Main.storyboard */,
 			);
 			path = Presentation;
@@ -215,6 +221,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD5EE5DE284D7887003966EF /* UIColor+Extensions.swift in Sources */,
+				4F2F812B2B02AE0D0048ADD2 /* AlertPresenter.swift in Sources */,
+				4F2F81292B02AD1B0048ADD2 /* AlertModel.swift in Sources */,
 				AD7AFA552836189F00399704 /* Array+Extensions.swift in Sources */,
 				4FEF1F592B013EAE00F55347 /* QuestionFactoryProtocol.swift in Sources */,
 				4FEF1F5B2B014ABC00F55347 /* QuestionFactoryDelegate.swift in Sources */,

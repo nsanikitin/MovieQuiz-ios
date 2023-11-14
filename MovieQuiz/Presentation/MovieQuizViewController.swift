@@ -10,34 +10,30 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet private weak var textLabel: UILabel!
     
     // MARK: - Variables
-    private var currentQuestionIndex = 0 // переменная с индексом текущего вопроса, начальное значение 0
-    private var correctAnswers = 0 // переменная со счётчиком правильных ответов, начальное значение закономерно 0
+    private var currentQuestionIndex = 0 // переменная с индексом текущего вопроса
+    private var correctAnswers = 0 // переменная со счётчиком правильных ответов
     private var questionsAmount = 10 // общее кол-во вопросов квиза
-    private var questionFactory: QuestionFactoryProtocol? = QuestionFactory() // фабрика вопросов
+    private var questionFactory: QuestionFactoryProtocol? // фабрика вопросов
     private var currentQuestion: QuizQuestion? // вопрос, который видит пользователь
     
     // MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        questionFactory = QuestionFactory()
         questionFactory?.delegate = self // для инъекции зависимостей
         questionFactory?.requestNextQuestion() // показываем первый вопрос
-        imageView.layer.masksToBounds = true // разрешаем рисовать рамку
-        imageView.layer.borderWidth = 8 // задаем ширину рамки согласно макету
-        imageView.layer.cornerRadius = 20 // задаем скругление рамки согласно макету
     }
     
     //MARK: - QuestionFactoryDelegate
     func didReceiveNextQuestion(question: QuizQuestion?) {
-        func didReceiveNextQuestion(question: QuizQuestion?) {
-            guard let question = question else {
-                return
-            }
-            
-            currentQuestion = question
-            let viewModel = convert(model: question)
-            DispatchQueue.main.async { [weak self] in
-                self?.show(quiz: viewModel)
-            }
+        guard let question = question else {
+            return
+        }
+        
+        currentQuestion = question
+        let viewModel = convert(model: question)
+        DispatchQueue.main.async { [weak self] in
+            self?.show(quiz: viewModel)
         }
     }
     
@@ -48,11 +44,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             image: UIImage(named: model.image) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
+        
         return questionStep
     }
     
     // приватный метод вывода на экран вопроса, который принимает на вход вью модель вопроса и ничего не возвращает
     private func show(quiz step: QuizStepViewModel) {
+        imageView.layer.masksToBounds = true // разрешаем рисовать рамку
+        imageView.layer.borderWidth = 8 // задаем ширину рамки согласно макету
+        imageView.layer.cornerRadius = 20 // задаем скругление рамки согласно макету
         imageView.layer.borderColor = UIColor.clear.cgColor // убираем цвет рамки
         noButton.isEnabled = true // включаем кнопку нет
         yesButton.isEnabled = true // включаем кнопку да
@@ -95,6 +95,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             
             // сценарий перехода к следующему вопросу
         } else {
+            currentQuestionIndex += 1 // идем к следующему вопросу
             self.questionFactory?.requestNextQuestion()
         }
     }
