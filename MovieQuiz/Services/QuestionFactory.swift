@@ -1,5 +1,6 @@
 import Foundation
 
+// фабрика вопросов
 class QuestionFactory: QuestionFactoryProtocol {
     // слабое свойство с делегатом
     weak var delegate: QuestionFactoryDelegate?
@@ -57,7 +58,7 @@ class QuestionFactory: QuestionFactoryProtocol {
         // берем элемент из массива по случайному индексу
         // используем Subscript для проверки невыхода индекса за пределы массива
         let question = questions[safe: index]
-        // возвращаем не сразу, а передаем делегату
+        // передаем делегату
         delegate?.didReceiveNextQuestion(question: question)
     }
 }

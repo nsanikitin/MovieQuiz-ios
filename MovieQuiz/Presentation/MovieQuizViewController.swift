@@ -9,19 +9,22 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
     
-    // MARK: - Variables
-    private var currentQuestionIndex = 0 // переменная с индексом текущего вопроса
-    private var correctAnswers = 0 // переменная со счётчиком правильных ответов
-    private var questionsAmount = 10 // общее кол-во вопросов квиза
+    // MARK: - Proprieties
+    private var currentQuestionIndex = 0 // индекс текущего вопроса
+    private var correctAnswers = 0 // счётчик правильных ответов
+    private let questionsAmount = 10 // общее кол-во вопросов квиза
+    private var currentQuestion: QuizQuestion? // текущий вопрос для пользователя
     private var questionFactory: QuestionFactoryProtocol? // фабрика вопросов
-    private var currentQuestion: QuizQuestion? // вопрос, который видит пользователь
+    private var alertPresenter: AlertPresenter? // показ алерта с результами по окончанию игры
     
-    // MARK: - Lyfecycle
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        questionFactory = QuestionFactory() // создаем экземпляр класса QuestionFactory
-        questionFactory?.delegate = self // для инъекции зависимостей
+        questionFactory = QuestionFactory() // создаем экземпляр QuestionFactory
+        questionFactory?.delegate = self // инъектируем зависимость через свойство
         questionFactory?.requestNextQuestion() // запрашиваем первый вопрос
+        alertPresenter = AlertPresenter() // создаем экземпляр AlertPresenter
+        alertPresenter?.movieController = self // инъектируем зависимость через свойство
     }
     
     //MARK: - QuestionFactoryDelegate
@@ -32,15 +35,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
         
         currentQuestion = question // записываем текущий вопрос
-        let viewModel = convert(model: question)
+        let viewModel = convert(model: question) // конвертируем во вью модель
         // оборачиваем в DispatchQueue.main на случай вызова не из главного потока
         DispatchQueue.main.async { [weak self] in
             self?.show(quiz: viewModel)
         }
     }
     
-    // MARK: - Private functions
-    // приватный метод конвертации, который принимает моковый вопрос и возвращает вью модель для главного экрана
+    // MARK: - Private methods
+    // приватный метод конвертации, принимает моковый вопрос и возвращает вью модель для главного экрана
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(
             image: UIImage(named: model.image) ?? UIImage(),
@@ -50,7 +53,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         return questionStep
     }
     
-    // приватный метод вывода на экран вопроса, который принимает на вход вью модель вопроса и ничего не возвращает
+    // приватный метод вывода вопроса на экран
     private func show(quiz step: QuizStepViewModel) {
         imageView.layer.masksToBounds = true // разрешаем рисовать рамку
         imageView.layer.borderWidth = 8 // задаем ширину рамки согласно макету
@@ -63,7 +66,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         imageView.image = step.image
     }
     
-    // приватный метод, который меняет цвет рамки, принимает на вход булевое значение и ничего не возвращает
+    // приватный метод, меняющий цвет рамки в зависимости от ответа на вопрос
     private func showAnswerResult(isCorrect: Bool) {
         noButton.isEnabled = false // выключаем кнопку нет для отсутствия доп. нажатий
         yesButton.isEnabled = false // выключаем кнопку да для отсутствия доп. нажатий
@@ -74,14 +77,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
         
         // запускаем задачу через 1 секунду c помощью диспетчера задач
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in // слабая ссылка на self
-            guard let self = self else { return } // разворачиваем слабую ссылку
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self = self else { return }
             self.showNextQuestionOrResults()
         }
     }
     
     // приватный метод, который содержит логику перехода в один из сценариев
-    // метод ничего не принимает и ничего не возвращает
     private func showNextQuestionOrResults() {
         // сценарий окончания викторины и показ результатов
         if currentQuestionIndex == questionsAmount - 1 {
@@ -93,8 +95,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
                 text: text,
                 buttonText: "Сыграть ещё раз")
             
-            show(quiz: viewModel) // покзываем алерт
-            
+            showResult(quiz: viewModel) // показываем результаты игры
+
             // сценарий перехода к следующему вопросу
         } else {
             currentQuestionIndex += 1 // идем к следующему вопросу
@@ -103,27 +105,20 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     // приватный метод для показа результатов раунда квиза
-    // принимает вью модель QuizResultsViewModel и ничего не возвращает
-    private func show(quiz result: QuizResultsViewModel) {
-        // задаем параметры для алерта
-        let alert = UIAlertController(
+    private func showResult(quiz result: QuizResultsViewModel) {
+        // создаем модель для AlertPresenter
+        let alertModel = AlertModel(
             title: result.title,
             message: result.text,
-            preferredStyle: .alert)
-        
-        // настройка параметров по нажатию кнопки алерта
-        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in // слабая ссылка на self
-            guard let self = self else { return } // разворачиваем слабую ссылку
-            self.currentQuestionIndex = 0 // обнуляем текущий индекс вопроса в массиве
-            self.correctAnswers = 0 // обнуляем кол-во правильных ответов
-            
-            // сбрасываем до первого вопроса и показываем его
-            questionFactory?.requestNextQuestion()
-        }
-        
-        alert.addAction(action)
-        
-        self.present(alert, animated: true, completion: nil)
+            buttonText: result.buttonText,
+            completion: { [weak self] in
+                guard let self = self else { return }
+                self.currentQuestionIndex = 0 // обнуляем текущий индекс вопроса
+                self.correctAnswers = 0 // обнуляем кол-во правильных ответов
+                questionFactory?.requestNextQuestion() // показываем первый вопрос
+            }
+        )
+        alertPresenter?.showAlert(alertModel: alertModel)
     }
     
     // MARK: - Actions
