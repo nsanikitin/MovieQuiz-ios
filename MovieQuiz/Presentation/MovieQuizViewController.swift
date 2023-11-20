@@ -16,6 +16,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var currentQuestion: QuizQuestion? // текущий вопрос для пользователя
     private var questionFactory: QuestionFactoryProtocol? // фабрика вопросов
     private var alertPresenter: AlertPresenter? // показ алерта с результами по окончанию игры
+    private var statisticService: StatisticServiceImplementation? // статистика по окончанию игры
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -23,8 +24,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         questionFactory = QuestionFactory() // создаем экземпляр QuestionFactory
         questionFactory?.delegate = self // инъектируем зависимость через свойство
         questionFactory?.requestNextQuestion() // запрашиваем первый вопрос
+        
         alertPresenter = AlertPresenter() // создаем экземпляр AlertPresenter
         alertPresenter?.movieController = self // инъектируем зависимость через свойство
+        
+        statisticService = StatisticServiceImplementation() // создаем экземпляр StatisticService
+        
+        imageView.layer.masksToBounds = true // разрешаем рисовать рамку
+        imageView.layer.borderWidth = 8 // задаем ширину рамки согласно макету
+        imageView.layer.cornerRadius = 20 // задаем скругление рамки согласно макету
     }
     
     //MARK: - QuestionFactoryDelegate
@@ -55,9 +63,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     // приватный метод вывода вопроса на экран
     private func show(quiz step: QuizStepViewModel) {
-        imageView.layer.masksToBounds = true // разрешаем рисовать рамку
-        imageView.layer.borderWidth = 8 // задаем ширину рамки согласно макету
-        imageView.layer.cornerRadius = 20 // задаем скругление рамки согласно макету
         imageView.layer.borderColor = UIColor.clear.cgColor // убираем цвет рамки
         noButton.isEnabled = true // включаем кнопку нет
         yesButton.isEnabled = true // включаем кнопку да
@@ -87,16 +92,27 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private func showNextQuestionOrResults() {
         // сценарий окончания викторины и показ результатов
         if currentQuestionIndex == questionsAmount - 1 {
-            let text = correctAnswers == questionsAmount ?
-            "Поздравляем, вы ответили на 10 из 10!" :
-            "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
+            // запись результатов в UserDefaults
+            statisticService?.store(correct: correctAnswers, total: questionsAmount)
+            
+            guard let statisticService = statisticService, let bestGame = statisticService.bestGame else {
+                print("Ошибка записи результатов")
+                return
+            }
+            
+            let text =  """
+                        Ваш результат: \(correctAnswers)/\(questionsAmount)
+                        Количество сыгранных квизов: \(statisticService.gamesCount)
+                        Рекорд: \(bestGame.correct)/\(bestGame.total) \(bestGame.date.dateTimeString)
+                        Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%
+                        """
             let viewModel = QuizResultsViewModel(
                 title: "Этот раунд окончен!",
                 text: text,
                 buttonText: "Сыграть ещё раз")
             
             showResult(quiz: viewModel) // показываем результаты игры
-
+            
             // сценарий перехода к следующему вопросу
         } else {
             currentQuestionIndex += 1 // идем к следующему вопросу
@@ -118,7 +134,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
                 questionFactory?.requestNextQuestion() // показываем первый вопрос
             }
         )
-        alertPresenter?.showAlert(alertModel: alertModel)
+        
+        alertPresenter?.showAlert(alertModel: alertModel) // показываем алерт с результами
     }
     
     // MARK: - Actions

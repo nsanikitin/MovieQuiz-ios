@@ -1,7 +1,7 @@
 import Foundation
 
 // фабрика вопросов
-class QuestionFactory: QuestionFactoryProtocol {
+final class QuestionFactory: QuestionFactoryProtocol {
     // слабое свойство с делегатом
     weak var delegate: QuestionFactoryDelegate?
     // массив вопросов из мок-файлов
