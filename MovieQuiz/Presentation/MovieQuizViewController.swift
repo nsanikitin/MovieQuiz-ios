@@ -10,6 +10,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet private weak var textLabel: UILabel!
     
     // MARK: - Proprieties
+    // статус бар в белый цвет
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+          return .lightContent
+    }
+    
     private var currentQuestionIndex = 0 // индекс текущего вопроса
     private var correctAnswers = 0 // счётчик правильных ответов
     private let questionsAmount = 10 // общее кол-во вопросов квиза
@@ -17,6 +22,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var questionFactory: QuestionFactoryProtocol? // фабрика вопросов
     private var alertPresenter: AlertPresenter? // показ алерта с результами по окончанию игры
     private var statisticService: StatisticService? // статистика по окончанию игры
+    
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -26,7 +32,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         questionFactory?.requestNextQuestion() // запрашиваем первый вопрос
         
         alertPresenter = AlertPresenter() // создаем экземпляр AlertPresenter
-        alertPresenter?.movieController = self // инъектируем зависимость через свойство
+        alertPresenter?.viewController = self // инъектируем зависимость через свойство
         
         statisticService = StatisticServiceImplementation() // создаем экземпляр StatisticService
         

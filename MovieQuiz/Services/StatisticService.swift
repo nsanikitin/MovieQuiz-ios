@@ -30,7 +30,11 @@ final class StatisticServiceImplementation: StatisticService {
     
     //  средняя точность в % за все время
     var totalAccuracy: Double {
-        Double(correct) / Double(total) * 100
+        if total > 0 {
+            return Double(correct) / Double(total) * 100
+        } else {
+            return 0
+        }
     }
     
     // общее кол-во сыгранных квизов

@@ -1,7 +1,7 @@
 import UIKit
 
 final class AlertPresenter {
-    weak var movieController: MovieQuizViewController? // ссылка на MovieQuizViewController
+    weak var viewController: MovieQuizViewController? // ссылка на MovieQuizViewController
 
     // метод для показа результатов раунда квиза
     func showAlert(alertModel: AlertModel) {
@@ -19,6 +19,6 @@ final class AlertPresenter {
         
         alert.addAction(action)
         
-        movieController?.present(alert, animated: true)
+        viewController?.present(alert, animated: true)
     }
 }
