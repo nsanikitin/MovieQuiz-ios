@@ -16,7 +16,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var currentQuestion: QuizQuestion? // текущий вопрос для пользователя
     private var questionFactory: QuestionFactoryProtocol? // фабрика вопросов
     private var alertPresenter: AlertPresenter? // показ алерта с результами по окончанию игры
-    private var statisticService: StatisticServiceImplementation? // статистика по окончанию игры
+    private var statisticService: StatisticService? // статистика по окончанию игры
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -103,7 +103,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             let text =  """
                         Ваш результат: \(correctAnswers)/\(questionsAmount)
                         Количество сыгранных квизов: \(statisticService.gamesCount)
-                        Рекорд: \(bestGame.correct)/\(bestGame.total) \(bestGame.date.dateTimeString)
+                        Рекорд: \(bestGame.correct)/\(bestGame.total) (\(bestGame.date.dateTimeString))
                         Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%
                         """
             let viewModel = QuizResultsViewModel(
