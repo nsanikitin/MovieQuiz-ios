@@ -8,6 +8,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     
     // MARK: - Proprieties
     // статус бар в белый цвет
@@ -142,6 +143,32 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         )
         
         alertPresenter?.showAlert(alertModel: alertModel) // показываем алерт с результами
+    }
+    
+    // приватный метод показа индикатора загрузки
+    private func showLoadIndicator() {
+        activityIndicator.isHidden = false // индикатор закрузки не скрыт
+        activityIndicator.startAnimating() // включаем анимацию индикатор
+    }
+    
+    // приватный метод показа алерта при загрузке данных из сети
+    private func showNetworkError(message: String) {
+        hideLoadingIndicator() // скрываем индикатор загрузки
+        
+        // создаем модель для AlertPresenter
+        let alertModel = AlertModel(
+            title: "Что-то пошло не так(",
+            message: "Невозможно загрузить данные",
+            buttonText: "Попробовать ещё раз",
+            completion: { [weak self] in
+                guard let self = self else { return }
+                self.currentQuestionIndex = 0 // обнуляем текущий индекс вопроса
+                self.correctAnswers = 0 // обнуляем кол-во правильных ответов
+                questionFactory?.requestNextQuestion() // показываем первый вопрос
+            }
+        )
+        
+        alertPresenter?.showAlert(alertModel: alertModel)
     }
     
     // MARK: - Actions
