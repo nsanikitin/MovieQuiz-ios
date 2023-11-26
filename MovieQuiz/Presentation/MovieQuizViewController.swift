@@ -30,9 +30,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         super.viewDidLoad()
         showLoadIndicator() // показываем индикатор загрузки
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self) // создаем экземпляр QuestionFactory
-        //questionFactory?.delegate = self // инъектируем зависимость через свойство
-        questionFactory?.loadData()
-        questionFactory?.requestNextQuestion() // запрашиваем первый вопрос
+        questionFactory?.loadData() // загружаем данные фильмов через API IMDb
         
         alertPresenter = AlertPresenter() // создаем экземпляр AlertPresenter
         alertPresenter?.viewController = self // инъектируем зависимость через свойство
@@ -59,8 +57,19 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
     }
     
+    // метод успешной загрузки
+    func didLoadDataFromServer() {
+        activityIndicator.isHidden = true // скрываем индикатор загрузки
+        questionFactory?.requestNextQuestion()
+    }
+    
+    // метод ошибки загрузки
+    func didFailToLoadData(with error: Error) {
+        showNetworkError(message: error.localizedDescription)
+    }
+    
     // MARK: - Private methods
-    // приватный метод конвертации, принимает моковый вопрос и возвращает вью модель для главного экрана
+    // приватный метод конвертации модели для главного экрана
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(
             image: UIImage(data: model.image) ?? UIImage(),
@@ -97,7 +106,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
     }
     
-    // приватный метод, который содержит логику перехода в один из сценариев
+    // приватный метод логики показа следующего вопроса или результатов
     private func showNextQuestionOrResults() {
         // сценарий окончания викторины и показ результатов
         if currentQuestionIndex == questionsAmount - 1 {
@@ -150,17 +159,18 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // приватный метод показа индикатора загрузки
     private func showLoadIndicator() {
         activityIndicator.isHidden = false // индикатор закрузки не скрыт
-        activityIndicator.startAnimating() // включаем анимацию индикатор
+        activityIndicator.startAnimating() // включаем анимацию индикатора
     }
     
     // приватный метод скрытия индикатора загрузки
     private func hideLoadIndicator() {
+        activityIndicator.stopAnimating() // выключаем анимацию индикатора
         activityIndicator.isHidden = true // индикатор закрузки скрыт
     }
     
-    // приватный метод показа алерта при загрузке данных из сети
+    // приватный метод показа алерта при ошибке загрузки данных из сети
     private func showNetworkError(message: String) {
-        hideLoadIndicator() // скрываем индикатор загрузки
+        hideLoadIndicator()
         
         // создаем модель для AlertPresenter
         let alertModel = AlertModel(
@@ -176,17 +186,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         )
         
         alertPresenter?.showAlert(alertModel: alertModel)
-    }
-    
-    // метод успешной загрузки
-    func didLoadDataFromServer() {
-        activityIndicator.isHidden = true // скрываем индикатор загрузки
-        questionFactory?.requestNextQuestion()
-    }
-    
-    // метод ошибки загрузки
-    func didFailToLoadData(with error: Error) {
-        showNetworkError(message: error.localizedDescription)
     }
     
     // MARK: - Actions

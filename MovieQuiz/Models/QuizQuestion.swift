@@ -1,8 +1,7 @@
 import Foundation
 
-// структура для вопросов
 struct QuizQuestion {
-    // название фильма, совпадает с названием картинки афиши фильма в Assets
+    // название фильма
     let image: Data
     // вопрос о рейтинге фильма
     let text: String

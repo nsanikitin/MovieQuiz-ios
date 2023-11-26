@@ -1,6 +1,5 @@
 import Foundation
 
-// структуры, которые будут дублировать компоновку JSON
 struct MostPopularMovies: Codable {
     let errorMessage: String
     let items: [MostPopularMovie]
@@ -11,6 +10,7 @@ struct MostPopularMovie: Codable {
     let rating: String
     let imageURL: URL
     
+    // вычисляемое свойство, чтобы получить ссылку с картиной в желаемом качестве
     var resizedImageURL: URL {
         // создаем строку из адреса
         let urlString = imageURL.absoluteString
