@@ -28,8 +28,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        questionFactory = QuestionFactory() // создаем экземпляр QuestionFactory
-        questionFactory?.delegate = self // инъектируем зависимость через свойство
+        showLoadIndicator() // показываем индикатор загрузки
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self) // создаем экземпляр QuestionFactory
+        //questionFactory?.delegate = self // инъектируем зависимость через свойство
+        questionFactory?.loadData()
         questionFactory?.requestNextQuestion() // запрашиваем первый вопрос
         
         alertPresenter = AlertPresenter() // создаем экземпляр AlertPresenter
@@ -61,7 +63,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // приватный метод конвертации, принимает моковый вопрос и возвращает вью модель для главного экрана
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(
-            image: UIImage(named: model.image) ?? UIImage(),
+            image: UIImage(data: model.image) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
         
@@ -151,9 +153,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         activityIndicator.startAnimating() // включаем анимацию индикатор
     }
     
+    // приватный метод скрытия индикатора загрузки
+    private func hideLoadIndicator() {
+        activityIndicator.isHidden = true // индикатор закрузки скрыт
+    }
+    
     // приватный метод показа алерта при загрузке данных из сети
     private func showNetworkError(message: String) {
-        hideLoadingIndicator() // скрываем индикатор загрузки
+        hideLoadIndicator() // скрываем индикатор загрузки
         
         // создаем модель для AlertPresenter
         let alertModel = AlertModel(
@@ -169,6 +176,17 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         )
         
         alertPresenter?.showAlert(alertModel: alertModel)
+    }
+    
+    // метод успешной загрузки
+    func didLoadDataFromServer() {
+        activityIndicator.isHidden = true // скрываем индикатор загрузки
+        questionFactory?.requestNextQuestion()
+    }
+    
+    // метод ошибки загрузки
+    func didFailToLoadData(with error: Error) {
+        showNetworkError(message: error.localizedDescription)
     }
     
     // MARK: - Actions
