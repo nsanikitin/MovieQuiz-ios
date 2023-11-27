@@ -1,6 +1,5 @@
 import Foundation
 
-// модель лучшей игры
 struct GameRecord: Codable {
     // количество правильных ответов
     let correct: Int

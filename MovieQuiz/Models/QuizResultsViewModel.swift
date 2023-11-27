@@ -1,8 +1,7 @@
 import Foundation
 
-// модель для состояния "Результат квиза"
 struct QuizResultsViewModel {
-    // заголовк алерта
+    // заголовок алерта
     let title: String
     // текст о количестве набранных очков
     let text: String

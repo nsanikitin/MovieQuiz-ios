@@ -1,6 +1,5 @@
 import UIKit
 
-// модель для алерта
 struct AlertModel {
     // текст заголовка алерта
     let title: String
