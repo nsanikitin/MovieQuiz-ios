@@ -2,56 +2,12 @@ import Foundation
 
 // фабрика вопросов
 final class QuestionFactory: QuestionFactoryProtocol {
-    // свойство с загрузчиком
-    private let moviesLoader: MoviesLoading
     // слабое свойство с делегатом
     weak var delegate: QuestionFactoryDelegate?
+    // свойство с загрузчиком
+    private let moviesLoader: MoviesLoading
     // фильмы, загруженные с сервера
     private var movies: [MostPopularMovie] = []
-    
-    // массив вопросов из мок-файлов
-//    private let questions: [QuizQuestion] = [
-//        QuizQuestion(
-//            image: "The Godfather",
-//            text: "Рейтинг этого фильма больше, чем 6?",
-//            correctAnswer: true),
-//        QuizQuestion(
-//            image: "The Dark Knight",
-//            text: "Рейтинг этого фильма больше, чем 6?",
-//            correctAnswer: true),
-//        QuizQuestion(
-//            image: "Kill Bill",
-//            text: "Рейтинг этого фильма больше, чем 6?",
-//            correctAnswer: true),
-//        QuizQuestion(
-//            image: "The Avengers",
-//            text: "Рейтинг этого фильма больше, чем 6?",
-//            correctAnswer: true),
-//        QuizQuestion(
-//            image: "Deadpool",
-//            text: "Рейтинг этого фильма больше, чем 6?",
-//            correctAnswer: true),
-//        QuizQuestion(
-//            image: "The Green Knight",
-//            text: "Рейтинг этого фильма больше, чем 6?",
-//            correctAnswer: true),
-//        QuizQuestion(
-//            image: "Old",
-//            text: "Рейтинг этого фильма больше, чем 6?",
-//            correctAnswer: false),
-//        QuizQuestion(
-//            image: "The Ice Age Adventures of Buck Wild",
-//            text: "Рейтинг этого фильма больше, чем 6?",
-//            correctAnswer: false),
-//        QuizQuestion(
-//            image: "Tesla",
-//            text: "Рейтинг этого фильма больше, чем 6?",
-//            correctAnswer: false),
-//        QuizQuestion(
-//            image: "Vivarium",
-//            text: "Рейтинг этого фильма больше, чем 6?",
-//            correctAnswer: false)
-//    ]
     
     init(moviesLoader: MoviesLoading, delegate: QuestionFactoryDelegate?) {
         self.moviesLoader = moviesLoader
@@ -77,14 +33,18 @@ final class QuestionFactory: QuestionFactoryProtocol {
                 imageData = try Data(contentsOf: movie.resizedImageURL)
             } catch {
                 print("Failed to load image")
+                self.delegate?.didGetError(with: "Failed to load image")
+                return
             }
             
             let rating = Float(movie.rating) ?? 0 // делаем из строки число
             
             // создаем вопрос с разным рейтингом для каждого вопроса и определяем корректность
-            let ratingForQuestion = Int.random(in: 6...8)
-            let text = "Рейтинг этого фильма больше чем \(ratingForQuestion)?"
-            let correctAnswer = rating > Float(ratingForQuestion)
+            let ratingForQuestion = Int.random(in: 7...9)
+            let moreOrLessArray: [String] = ["больше", "меньше"]
+            let moreOrLessForQuestion = moreOrLessArray.randomElement()
+            let text = "Рейтинг этого фильма \(moreOrLessForQuestion!), чем \(ratingForQuestion)?"
+            let correctAnswer = moreOrLessForQuestion == "больше" ? rating > Float(ratingForQuestion) : rating < Float(ratingForQuestion)
             
             // создаем модель вопроса
             let question = QuizQuestion(image: imageData,
@@ -106,12 +66,18 @@ final class QuestionFactory: QuestionFactoryProtocol {
                 guard let self = self else { return }
                 switch result {
                 case .success(let mostPopularMovies):
-                    self.movies = mostPopularMovies.items // сохраняем фильм в переменную
-                    self.delegate?.didLoadDataFromServer() // сообщаем, что данные загрузились
+                    if mostPopularMovies.errorMessage == "" {
+                        self.movies = mostPopularMovies.items // сохраняем фильм в переменную
+                        self.delegate?.didLoadDataFromServer() // сообщаем, что данные загрузились
+                    } else {
+                        print(mostPopularMovies.errorMessage) // выводим сообщение об ошибке в консоль
+                        self.delegate?.didGetError(with: mostPopularMovies.errorMessage) // сообщаем, что есть ошибка
+                    }
                 case .failure(let error):
                     self.delegate?.didFailToLoadData(with: error) // сообщаем об ошибке нашему MovieQuizViewController
                 }
             }
         }
     }
+    
 }

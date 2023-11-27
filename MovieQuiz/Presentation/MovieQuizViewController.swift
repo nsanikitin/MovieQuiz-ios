@@ -13,7 +13,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // MARK: - Proprieties
     // статус бар в белый цвет
     override var preferredStatusBarStyle: UIStatusBarStyle {
-          return .lightContent
+        return .lightContent
     }
     
     private var currentQuestionIndex = 0 // индекс текущего вопроса
@@ -49,6 +49,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             return
         }
         
+        hideLoadIndicator() // выключаем индикатор загрузки
         currentQuestion = question // записываем текущий вопрос
         let viewModel = convert(model: question) // конвертируем во вью модель
         // оборачиваем в DispatchQueue.main на случай вызова не из главного потока
@@ -59,13 +60,19 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     // метод успешной загрузки
     func didLoadDataFromServer() {
-        activityIndicator.isHidden = true // скрываем индикатор загрузки
+        hideLoadIndicator() // выключаем индикатор загрузки
         questionFactory?.requestNextQuestion()
+        showLoadIndicator() // включаем индикатор загрузки
     }
     
     // метод ошибки загрузки
     func didFailToLoadData(with error: Error) {
-        showNetworkError(message: error.localizedDescription)
+        showNetworkError(message: error.localizedDescription) // показываем алерт с ошибкой
+    }
+    
+    // метод получения ошибки
+    func didGetError(with error: String) {
+        showDataError(message: error)
     }
     
     // MARK: - Private methods
@@ -134,6 +141,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             // сценарий перехода к следующему вопросу
         } else {
             currentQuestionIndex += 1 // идем к следующему вопросу
+            showLoadIndicator() // включаем индикатор загрузки
             self.questionFactory?.requestNextQuestion()
         }
     }
@@ -156,18 +164,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         alertPresenter?.showAlert(alertModel: alertModel) // показываем алерт с результами
     }
     
-    // приватный метод показа индикатора загрузки
-    private func showLoadIndicator() {
-        activityIndicator.isHidden = false // индикатор закрузки не скрыт
-        activityIndicator.startAnimating() // включаем анимацию индикатора
-    }
-    
-    // приватный метод скрытия индикатора загрузки
-    private func hideLoadIndicator() {
-        activityIndicator.stopAnimating() // выключаем анимацию индикатора
-        activityIndicator.isHidden = true // индикатор закрузки скрыт
-    }
-    
     // приватный метод показа алерта при ошибке загрузки данных из сети
     private func showNetworkError(message: String) {
         hideLoadIndicator()
@@ -181,11 +177,41 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
                 guard let self = self else { return }
                 self.currentQuestionIndex = 0 // обнуляем текущий индекс вопроса
                 self.correctAnswers = 0 // обнуляем кол-во правильных ответов
+                showLoadIndicator()
                 questionFactory?.requestNextQuestion() // показываем первый вопрос
             }
         )
         
         alertPresenter?.showAlert(alertModel: alertModel)
+    }
+    
+    // приватный метод показа алерта при ошибке загрузки данных изображения
+    private func showDataError(message: String) {
+        hideLoadIndicator()
+        
+        // создаем модель для AlertPresenter
+        let alertModel = AlertModel(
+            title: "Ошибка в загрузке данных",
+            message: message,
+            buttonText: "Попробовать ещё раз",
+            completion: { [weak self] in
+                guard let self = self else { return }
+                showLoadIndicator()
+                questionFactory?.loadData() // пробуем загрузить данные снова
+            }
+        )
+        
+        alertPresenter?.showAlert(alertModel: alertModel)
+    }
+    
+    // приватный метод показа индикатора загрузки
+    private func showLoadIndicator() {
+        activityIndicator.startAnimating() // включаем анимацию индикатора и показываем его
+    }
+    
+    // приватный метод скрытия индикатора загрузки
+    private func hideLoadIndicator() {
+        activityIndicator.stopAnimating() // выключаем анимацию индикатора и скрываем его
     }
     
     // MARK: - Actions
