@@ -1,7 +1,7 @@
 import Foundation
 
 /// отвечает за загрузку данных по URL
-struct NetworkClient {
+struct NetworkClient: NetworkRouting {
 
     // реализация протокола Error на случай ошибки
     private enum NetworkError: Error {
