@@ -11,6 +11,7 @@ final class AlertPresenter {
             title: alertModel.title,
             message: alertModel.message,
             preferredStyle: .alert)
+        alert.view.accessibilityIdentifier = "Alert" // присваем алерту id
         
         // настройка параметров по нажатию кнопки алерта
         let action = UIAlertAction(title: alertModel.buttonText, style: .default) { _ in 
