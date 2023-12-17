@@ -4,12 +4,11 @@ import XCTest
 @testable import MovieQuiz
 
 struct StubNetworkClient: NetworkRouting {
-    
     enum TestError: Error { // тестовая ошибка
         case test
     }
     
-    let emulateError: Bool // этот параметр нужен, чтобы заглушка эмулировала либо ошибку сети, либо успешный ответ
+    let emulateError: Bool // параметр, чтобы заглушка эмулировала либо ошибку сети, либо успешный ответ
     
     func fetch(url: URL, handler: @escaping (Result<Data, Error>) -> Void) {
         if emulateError {
@@ -19,6 +18,7 @@ struct StubNetworkClient: NetworkRouting {
         }
     }
     
+    // тестовые данные
     private var expectedResponse: Data {
         """
         {
@@ -55,9 +55,10 @@ struct StubNetworkClient: NetworkRouting {
 }
 
 class MoviesLoaderTests: XCTestCase {
+    // тест успешной загрузки данных
     func testSuccessLoading() throws {
         // Given
-        let stubNetworkClient = StubNetworkClient(emulateError: false) // говорим, что не хотим эмулировать ошибку
+        let stubNetworkClient = StubNetworkClient(emulateError: false) // не хотим эмулировать ошибку
         let loader = MoviesLoader(networkClient: stubNetworkClient)
         
         // When
@@ -67,7 +68,7 @@ class MoviesLoaderTests: XCTestCase {
             // Then
             switch result {
             case .success(let movies):
-                // проверим, что пришло, например, два фильма — ведь в тестовых данных их всего два
+                // проверим, что пришло, например, два фильма
                 XCTAssertEqual(movies.items.count, 2)
                 expectation.fulfill()
             case .failure(_):
@@ -80,7 +81,7 @@ class MoviesLoaderTests: XCTestCase {
     
     func testFailureLoading() throws {
         // Given
-        let stubNetworkClient = StubNetworkClient(emulateError: true) // говорим, что хотим эмулировать ошибку
+        let stubNetworkClient = StubNetworkClient(emulateError: true) // хотим эмулировать ошибку
         let loader = MoviesLoader(networkClient: stubNetworkClient)
         
         // When

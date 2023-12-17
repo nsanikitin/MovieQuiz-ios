@@ -3,7 +3,8 @@ import XCTest
 @testable import MovieQuiz
 
 class ArrayTests: XCTestCase {
-    func testGetValueInRange() throws { // тест на успешное взятие элемента по индексу
+    // тест на успешное взятие элемента по индексу
+    func testGetValueInRange() throws {
         // Given
         let array = [1, 1, 2, 3, 5]
         
@@ -15,6 +16,7 @@ class ArrayTests: XCTestCase {
         XCTAssertEqual(value, 2)
     }
     
+    // тест на неуспешное взятие элемента по индексу
     func testGetValueOutOfRange() throws {
         // Given
         let array = [1, 1, 2, 3, 5]

@@ -21,6 +21,7 @@ final class MovieQuizUITests: XCTestCase {
         app = nil
     }
     
+    // тест действий по нажатию кнопки да
     func testYesButton() {
         sleep(3)
         let firstPoster = app.images["Poster"] // находим первоначальный постер
@@ -38,6 +39,7 @@ final class MovieQuizUITests: XCTestCase {
         XCTAssertEqual(indexLabel.label, "2/10") // проверяем, что индекс изменился на 2
     }
     
+    // тест действий по нажатию кнопки нет
     func testNoButton() {
         sleep(3)
         let firstPoster = app.images["Poster"] // находим первоначальный постер
@@ -55,6 +57,7 @@ final class MovieQuizUITests: XCTestCase {
         XCTAssertEqual(indexLabel.label, "2/10") // проверяем, что индекс изменился на 2
     }
     
+    // тест показа алерта после раунда
     func testAlertPresentAfterQuiz() {
         sleep(3)
         
@@ -72,6 +75,7 @@ final class MovieQuizUITests: XCTestCase {
         XCTAssertEqual(quizAlertButton, "Сыграть ещё раз") // проверяем, что текст кнопки алерта правильный
     }
     
+    // тест, что алерт пропадает по нажатию кнопки действия на нем
     func testAlertDismissAfterQuiz() {
         sleep(3)
         

@@ -8,7 +8,7 @@ struct NetworkClient: NetworkRouting {
         case codeError
     }
     
-    // метод загрузки данных по заданному URL
+    // загрузка данных по заданному URL
     func fetch(url: URL, handler: @escaping (Result<Data, Error>) -> Void) {
         let request = URLRequest(url: url)
         

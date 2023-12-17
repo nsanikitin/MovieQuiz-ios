@@ -170,9 +170,9 @@
 			isa = PBXGroup;
 			children = (
 				AD1ABAB52831907B00B3E448 /* MovieQuizViewController.swift */,
+				4F8C9DFB2B2CA9D700113648 /* MovieQuizPresenter.swift */,
 				4F2F812A2B02AE0D0048ADD2 /* AlertPresenter.swift */,
 				AD1ABAB72831907B00B3E448 /* Main.storyboard */,
-				4F8C9DFB2B2CA9D700113648 /* MovieQuizPresenter.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";

@@ -1,12 +1,16 @@
 import UIKit
 
 final class AlertPresenter {
-    weak var viewController: MovieQuizViewController? // ссылка на MovieQuizViewController
+    weak var viewController: MovieQuizViewController?
+    
+    init(viewController: MovieQuizViewController?) {
+        self.viewController = viewController
+    }
 
-    // метод для показа результатов раунда квиза
+    // показ алерта с результатами раунда квиза
     func showAlert(alertModel: AlertModel) {
         
-        // задаем параметры для алерта
+        // параметры для алерта
         let alert = UIAlertController(
             title: alertModel.title,
             message: alertModel.message,

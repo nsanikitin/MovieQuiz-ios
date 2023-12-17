@@ -12,10 +12,8 @@ struct MostPopularMovie: Codable {
     
     // вычисляемое свойство, чтобы получить ссылку с картиной в желаемом качестве
     var resizedImageURL: URL {
-        // создаем строку из адреса
-        let urlString = imageURL.absoluteString
-        //  обрезаем лишнюю часть и добавляем модификатор желаемого качества
-        let imageUrlString = urlString.components(separatedBy: "._")[0] + "._V0_UX600_.jpg"
+        let urlString = imageURL.absoluteString // создаем строку из адреса
+        let imageUrlString = urlString.components(separatedBy: "._")[0] + "._V0_UX600_.jpg" //  обрезаем лишнюю часть и добавляем модификатор желаемого качества
         
         // пытаемся создать новый адрес, если не получается возвращаем старый
         guard let newURL = URL(string: imageUrlString) else {
