@@ -9,9 +9,9 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     private var currentQuestion: QuizQuestion? // текущий вопрос для пользователя
     private var questionFactory: QuestionFactoryProtocol? // фабрика вопросов
     private var statisticService: StatisticService! // статистика по окончанию игры
-    private weak var viewController: MovieQuizViewController?
+    private weak var viewController: MovieQuizViewControllerProtocol?
     
-    init(viewController: MovieQuizViewController?) {
+    init(viewController: MovieQuizViewControllerProtocol) {
         self.viewController = viewController
         
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)

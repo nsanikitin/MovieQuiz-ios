@@ -1,5 +1,3 @@
-import Foundation
-
 import XCTest
 @testable import MovieQuiz
 
@@ -54,7 +52,7 @@ struct StubNetworkClient: NetworkRouting {
     }
 }
 
-class MoviesLoaderTests: XCTestCase {
+final class MoviesLoaderTests: XCTestCase {
     // тест успешной загрузки данных
     func testSuccessLoading() throws {
         // Given
@@ -79,6 +77,7 @@ class MoviesLoaderTests: XCTestCase {
         waitForExpectations(timeout: 1)
     }
     
+    // тест неуспешной загрузки данных
     func testFailureLoading() throws {
         // Given
         let stubNetworkClient = StubNetworkClient(emulateError: true) // хотим эмулировать ошибку

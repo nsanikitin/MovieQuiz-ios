@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController {
+final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
     
     // MARK: - Outlets
     @IBOutlet private weak var noButton: UIButton!
@@ -55,7 +55,7 @@ final class MovieQuizViewController: UIViewController {
     
     // показ результата раунда квиза
     func showResult(quiz result: QuizResultsViewModel) {
-
+        
         let alertModel = AlertModel(
             title: result.title,
             message: result.text,
