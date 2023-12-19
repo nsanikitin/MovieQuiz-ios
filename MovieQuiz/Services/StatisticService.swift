@@ -67,7 +67,7 @@ final class StatisticServiceImplementation: StatisticService {
         }
     }
     
-    // метод сохранения статистики в UserDefaults
+    // сохранение статистики в UserDefaults
     func store(correct count: Int, total amount: Int) {
         self.correct += count // получаем общее кол-во правильных ответов за все время
         self.total += amount // получаем общее кол-во вопросов за все время
@@ -84,5 +84,4 @@ final class StatisticServiceImplementation: StatisticService {
             bestGame = currentGame
         }
     }
-
 }

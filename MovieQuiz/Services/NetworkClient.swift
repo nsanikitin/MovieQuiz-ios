@@ -1,14 +1,14 @@
 import Foundation
 
 /// отвечает за загрузку данных по URL
-struct NetworkClient {
+struct NetworkClient: NetworkRouting {
 
     // реализация протокола Error на случай ошибки
     private enum NetworkError: Error {
         case codeError
     }
     
-    // метод загрузки данных по заданному URL
+    // загрузка данных по заданному URL
     func fetch(url: URL, handler: @escaping (Result<Data, Error>) -> Void) {
         let request = URLRequest(url: url)
         

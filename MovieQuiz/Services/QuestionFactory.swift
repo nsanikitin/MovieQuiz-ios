@@ -2,21 +2,18 @@ import Foundation
 
 // фабрика вопросов
 final class QuestionFactory: QuestionFactoryProtocol {
-    // слабое свойство с делегатом
-    weak var delegate: QuestionFactoryDelegate?
-    // свойство с загрузчиком
-    private let moviesLoader: MoviesLoading
-    // фильмы, загруженные с сервера
-    private var movies: [MostPopularMovie] = []
+    weak var delegate: QuestionFactoryDelegate? // делегат
+    private let moviesLoader: MoviesLoading // загрузчик
+    private var movies: [MostPopularMovie] = [] // фильмы с сервера
     
     init(moviesLoader: MoviesLoading, delegate: QuestionFactoryDelegate?) {
         self.moviesLoader = moviesLoader
         self.delegate = delegate
     }
     
-    // метод возвращения следующего вопроса, передает его делегату QuestionFactoryDelegate
+    // возвращение следующего вопроса, передается через делегат
     func requestNextQuestion() {
-        // запускаем код в отдельном потоке
+        // запускаем в отдельном потоке
         DispatchQueue.global().async { [weak self] in
             guard let self = self else { return }
             
@@ -26,7 +23,7 @@ final class QuestionFactory: QuestionFactoryProtocol {
             // используем Subscript для проверки невыхода индекса за пределы массива
             guard let movie = self.movies[safe: index] else { return }
             
-            // создание данных из URL
+            // создаем данные из URL
             var imageData = Data()
             
             do {
@@ -37,7 +34,8 @@ final class QuestionFactory: QuestionFactoryProtocol {
                 return
             }
             
-            let rating = Float(movie.rating) ?? 0 // делаем из строки число
+            // делаем из строки число
+            let rating = Float(movie.rating) ?? 0
             
             // создаем вопрос с разным рейтингом для каждого вопроса и определяем корректность
             let ratingForQuestion = Int.random(in: 7...9)
@@ -59,7 +57,7 @@ final class QuestionFactory: QuestionFactoryProtocol {
         }
     }
     
-    // метод, инициализирующий загрузку данных
+    // загрузка данных
     func loadData() {
         moviesLoader.loadMovies { [weak self] result in
             DispatchQueue.main.async {
@@ -71,13 +69,12 @@ final class QuestionFactory: QuestionFactoryProtocol {
                         self.delegate?.didLoadDataFromServer() // сообщаем, что данные загрузились
                     } else {
                         print(mostPopularMovies.errorMessage) // выводим сообщение об ошибке в консоль
-                        self.delegate?.didGetError(with: mostPopularMovies.errorMessage) // сообщаем, что есть ошибка
+                        self.delegate?.didGetError(with: mostPopularMovies.errorMessage) // сообщаем через делегат об ошибке
                     }
                 case .failure(let error):
-                    self.delegate?.didFailToLoadData(with: error) // сообщаем об ошибке нашему MovieQuizViewController
+                    self.delegate?.didFailToLoadData(with: error) // сообщаем через делегат об ошибке
                 }
             }
         }
     }
-    
 }

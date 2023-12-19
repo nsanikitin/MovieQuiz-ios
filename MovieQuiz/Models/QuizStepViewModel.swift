@@ -1,10 +1,7 @@
 import UIKit
 
 struct QuizStepViewModel {
-    // картинка с афишей фильма с типом UIImage
-    let image: UIImage
-    // вопрос о рейтинге квиза
-    let question: String
-    // порядковый номер этого вопроса (ex. "1/10")
-    let questionNumber: String
+    let image: Data // афиша фильма
+    let question: String // вопрос о рейтинге
+    let questionNumber: String // порядковый номер этого вопроса
 }
