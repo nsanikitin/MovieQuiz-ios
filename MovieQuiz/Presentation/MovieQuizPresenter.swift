@@ -1,4 +1,4 @@
-import UIKit
+import Foundation
 
 final class MovieQuizPresenter: QuestionFactoryDelegate {
     
@@ -58,7 +58,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     // конвертация модели для главного экрана
     func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(
-            image: UIImage(data: model.image) ?? UIImage(),
+            image: model.image,
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
         
@@ -152,5 +152,4 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     func yesButtonDidTape() {
         didAnswer(isYes: true)
     }
-    
 }

@@ -50,7 +50,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         imageView.layer.borderColor = UIColor.clear.cgColor // убираем цвет рамки
         counterLabel.text = step.questionNumber
         textLabel.text = step.question
-        imageView.image = step.image
+        imageView.image = UIImage(data: step.image) ?? UIImage()
     }
     
     // показ результата раунда квиза
@@ -137,5 +137,4 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     @IBAction private func yesButtonDidTape(_ sender: Any) {
         presenter.yesButtonDidTape()
     }
-    
 }

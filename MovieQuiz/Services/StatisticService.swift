@@ -84,5 +84,4 @@ final class StatisticServiceImplementation: StatisticService {
             bestGame = currentGame
         }
     }
-
 }
